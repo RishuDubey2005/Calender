@@ -1,0 +1,181 @@
+<!-- 
+ 
+cd C:\Users\HP\Downloads\CODING\calender-claude\backend
+
+cd C:\Users\HP\Downloads\CODING\calender-claude\frontend
+
+-->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar-app</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- ===== TOP: Calendar ===== -->
+        <div class="calendar-section">
+            <div class="cal-header">
+                <button class="nav-btn" id="prevMonth">&#8592;</button>
+                <span class="month-label" id="monthYear"></span>
+                <button class="nav-btn" id="nextMonth">&#8594;</button>
+            </div>
+            <div class="day-names">
+                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <!-- ===== BOTTOM: Events Panel ===== -->
+        <div class="events-section">
+            <div class="events-header">
+                <span id="selectedDateLabel">Today</span>
+                <span class="event-count" id="eventCount"></span>
+            </div>
+            <div class="events-list" id="eventsList"></div>
+        </div>
+
+    </div>
+
+    <!-- FAB -->
+    <button class="fab" id="fabBtn" title="Add Event">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Backdrop -->
+    <div class="backdrop" id="backdrop"></div>
+
+    <!-- Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-drag-bar"></div>
+        <div class="modal-header">
+            <h3 id="modalTitle">New Event</h3>
+            <button class="icon-btn" id="closeModal"><i class="fas fa-times">❌</i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="eventId">
+
+            <div class="field-group">
+                <i class="fas fa-heading field-icon"></i>
+                <input type="text" id="eventTitle" class="field-input" placeholder="Add title *">
+            </div>
+
+            <div class="field-group">
+                <i class="fas fa-calendar-day field-icon"></i>
+                <label for="eventDate" class="field-label">Date</label>
+                <input type="date" id="eventDate" class="field-input">
+            </div>
+
+            <div class="field-group">
+                <i class="fas fa-clock field-icon"></i>
+                <div class="time-picker-wrap">
+                    <div class="time-display" id="timeDisplay" tabindex="0">
+                        <span id="timeDisplayText">Select time</span>
+                        <i class="fas fa-chevron-down time-chev" id="timeChev"></i>
+                    </div>
+                    <div class="time-dropdown" id="timeDropdown">
+                        <div class="time-cols">
+                            <div class="time-col">
+                                <button class="time-arrow" id="hourUp"><i class="fas fa-chevron-up"></i>.</button>
+                                <div class="time-val" id="hourVal">12</div>
+                                <button class="time-arrow" id="hourDown"><i class="fas fa-chevron-down"></i>.</button>
+                            </div>
+                            <div class="time-sep">:</div>
+                            <div class="time-col">
+                                <button class="time-arrow" id="minUp"><i class="fas fa-chevron-up"></i>.</button>
+                                <div class="time-val" id="minVal">00</div>
+                                <button class="time-arrow" id="minDown"><i class="fas fa-chevron-down"></i>.</button>
+                            </div>
+                            <div class="time-ampm-col">
+                                <button class="ampm-btn" id="amBtn">AM</button>
+                                <button class="ampm-btn" id="pmBtn">PM</button>
+                            </div>
+                        </div>
+                        <div class="time-actions">
+                            <button class="time-clear-btn" id="timeClear">Clear</button>
+                            <button class="time-ok-btn" id="timeOk">Apply</button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="eventTime">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <i class="fas fa-align-left field-icon"></i>
+                <textarea id="eventDescription" class="field-input field-textarea" placeholder="Name:- Rishu/Himanshu" rows="2"></textarea>
+            </div>
+
+            <div class="field-group">
+                <i class="fas fa-palette field-icon"></i>
+                <div class="color-picker" id="colorPicker">
+                    <div class="color-dot active" style="background:#4285f4" data-color="#4285f4"></div>
+                    <div class="color-dot" style="background:#ea4335" data-color="#ea4335"></div>
+                    <div class="color-dot" style="background:#34a853" data-color="#34a853"></div>
+                    <div class="color-dot" style="background:#fbbc04" data-color="#fbbc04"></div>
+                    <div class="color-dot" style="background:#ff6d00" data-color="#ff6d00"></div>
+                    <div class="color-dot" style="background:#9c27b0" data-color="#9c27b0"></div>
+                    <div class="color-dot" style="background:#00bcd4" data-color="#00bcd4"></div>
+                    <div class="color-dot" style="background:#795548" data-color="#795548"></div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <i class="fas fa-bell field-icon"></i>
+                <label for="eventReminder" class="field-label">Reminder</label>
+                <select id="eventReminder" class="field-input field-select">
+                    <option value="0">No reminder</option>
+                    <option value="5">5 minutes before</option>
+                    <option value="10">10 minutes before</option>
+                    <option value="15">15 minutes before</option>
+                    <option value="30">30 minutes before</option>
+                    <option value="60">1 hour before</option>
+                    <option value="1440">1 day before</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <i class="fas fa-redo field-icon"></i>
+                <label for="eventRecurring" class="field-label">Recurring</label>
+                <select id="eventRecurring" class="field-input field-select">
+                    <option value="none">Does not repeat</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly (same day)</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-ghost" id="cancelModal">Cancel</button>
+            <button class="btn-primary" id="saveEvent">
+                <i class="fas fa-check"></i> Save
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Recurring Delete Dialog -->
+    <div class="rdel-backdrop" id="rdelBackdrop"></div>
+    <div class="rdel-box" id="rdelBox">
+        <div class="rdel-icon"><i class="fas fa-repeat"></i></div>
+        <h4 class="rdel-title">Recurring Event</h4>
+        <p class="rdel-msg" id="rdelMsg">This event repeats. What do you want to delete?</p>
+        <div class="rdel-btns">
+            <button class="rdel-btn rdel-this"  id="rdelThis">Only this event</button>
+            <button class="rdel-btn rdel-all"   id="rdelAll">All recurring events</button>
+            <button class="rdel-btn rdel-cancel" id="rdelCancel">Cancel</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
