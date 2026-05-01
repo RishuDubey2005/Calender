@@ -1,5 +1,5 @@
 // ⚠️ Change this to your deployed backend URL when going live
-const API_URL ='https://https://backend-32gs.onrender.com';
+const API_URL ='https://backend-32gs.onrender.com';
 
 // ─── STATE ───
 let currentMonth = new Date();
