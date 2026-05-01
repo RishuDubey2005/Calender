@@ -6,7 +6,10 @@ const eventRoutes = require('./routes/event.routes');
 const app = express();
 
 app.use(cors({
-    origin: true,
+    origin: [
+        "http://localhost:5173",
+        "https://thecalender.onrender.com"
+    ],
     credentials: true
 }));
 
